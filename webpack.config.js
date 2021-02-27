@@ -18,7 +18,7 @@ module.exports = (env = {}) => ({
   context: resolve('src/'),
   mode: isProd ? 'production' : 'development',
   entry: {
-    app: './app.ts'
+    app:  ['babel-polyfill', './app.js']
   },
   output: {
     path: resolve("dist"),
