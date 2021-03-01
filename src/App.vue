@@ -168,8 +168,6 @@ export default {
         const res = await fetch('https://min-api.cryptocompare.com/data/price?fsym=' + currentTicker.name + '&tsyms=USD&api_key=70aba50377d8f5eda9cfc235b50c0cdf5e77bb848b97fa7d3892dc4d49bf836f');
         const data = await res.json();
         // currentTicker.price = data.USD;
-        console.log('data = ', data);
-        console.log('this.sel = ', this.sel);
         this.tickers.find(t => t.name === currentTicker.name).price = data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
 
         if (this.sel?.name === currentTicker.name) {
@@ -191,7 +189,6 @@ export default {
     normalizeGraph() {
       const maxVal = Math.max(...this.graph);
       const minVal = Math.min(...this.graph);
-      console.log(minVal, maxVal);
       return this.graph.map(
         price => maxVal - minVal === 0 ? 5 : 5 + ((price - minVal) * 95) / (maxVal - minVal)
       )
