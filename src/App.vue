@@ -214,6 +214,10 @@ export default {
       this.tickers = JSON.parse(tickersData)
     }
 
+    const windowData = Object.fromEntries(new URL(window.location).searchParams.entries())
+    this.filter = windowData.filter
+    this.page = windowData.page
+
     this.tickers.forEach(t => this.subscribeToUpdates(t.name))
 
   },
@@ -227,6 +231,20 @@ export default {
   watch: {
     filter() {
       this.page = 1
+
+      window.history.pushState(
+          null,
+          document.title,
+          window.location.pathname + '?filter=' + this.filter + '&page=' + this.page
+      )
+    },
+
+    page() {
+      window.history.pushState(
+          null,
+          document.title,
+          window.location.pathname + '?filter=' + this.filter + '&page=' + this.page
+      )
     }
   },
 
