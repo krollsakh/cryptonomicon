@@ -62,26 +62,45 @@
           </svg>
           Добавить
         </button>
-        <hr class="w-full border-t border-gray-600 my-4"/>
-        <div>
-          <label for="filter" class=" text-sm font-medium text-gray-700">Фильтр</label>
-          <input
-              v-model="filter"
-              type="text"
-              name="filter"
-              id="filter"
-              class="mx-2 pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
-          />
-          <button class="mx-1 my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Назад</button>
-          <button class="mx-1 my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Вперед</button>
-        </div>
       </section>
 
       <template v-if="tickers.length">
+        <hr class="w-full border-t border-gray-600 my-2"/>
+        <div class="flex">
+          <div class="max-w-xs">
+            <label for="filter" class=" text-sm font-medium text-gray-700">Фильтр</label>
+            <div class="mt-1 relative rounded-md shadow-md">
+              <input
+                  v-model="filter"
+                  type="text"
+                  name="filter"
+                  id="filter"
+                  class="pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
+              />
+            </div>
+          </div>
+        </div>
+        <div>
+          <button
+              @click="page --"
+              v-if="page > 1"
+              class="mx-1 my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          >
+            Назад
+          </button>
+          {{ page }}
+          <button
+              @click="page ++"
+              v-if="hasNextPage"
+              class="mx-1 my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          >
+            Вперед
+          </button>
+        </div>
         <hr class="w-full border-t border-gray-600 my-4"/>
         <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div
-              v-for="t of tickers"
+              v-for="t of filteredTickers()"
               @click="select(t)"
               :key="t.name"
               :class="{
@@ -183,7 +202,9 @@ export default {
       coins: [],
       toasts: [],
       isLoaded: false,
+      page: 1,
       filter: '',
+      hasNextPage: true,
     };
   },
 
@@ -203,7 +224,25 @@ export default {
     this.getCoinList()
   },
 
+  watch: {
+    filter() {
+      this.page = 1
+    }
+  },
+
   methods: {
+
+    filteredTickers() {
+      const start = (this.page - 1) * 6
+      const end = this.page * 6
+
+      const filteredTickers = this.tickers.filter(t => t.name.toUpperCase().includes(this.filter.toUpperCase()))
+
+      this.hasNextPage = filteredTickers.length > end
+      console.log(filteredTickers.length, end)
+
+      return filteredTickers.slice(start, end)
+    },
 
     subscribeToUpdates(tickerName) {
       setInterval(async () => {
@@ -253,6 +292,7 @@ export default {
       }
 
       this.ticker = ''
+      this.filter = ''
       this.isError = false
     },
 
