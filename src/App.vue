@@ -215,8 +215,12 @@ export default {
     }
 
     const windowData = Object.fromEntries(new URL(window.location).searchParams.entries())
-    this.filter = windowData.filter
-    this.page = windowData.page
+    if (windowData.filter) {
+      this.filter = windowData.filter
+    }
+    if (windowData.page) {
+      this.page = windowData.page
+    }
 
     this.tickers.forEach(t => this.subscribeToUpdates(t.name))
 
