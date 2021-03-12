@@ -116,7 +116,14 @@
                 {{ t.price }}
               </dd>
             </div>
-            <div class="w-full border-t border-gray-200"></div>
+            <div class="w-full border-t border-gray-200 justify-center">
+              <button
+                  @click="subscribeToUpdates(t.name)"
+                  class="flex w-full items-center justify-center font-medium bg-gray-200 px-1 py-1 sm:px-6 text-md text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition-all focus:outline-none"
+              >
+                Обновить
+              </button>
+            </div>
             <button
                 @click.stop="remove(t)"
                 class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
@@ -261,22 +268,34 @@ export default {
       const filteredTickers = this.tickers.filter(t => t.name.toUpperCase().includes(this.filter.toUpperCase()))
 
       this.hasNextPage = filteredTickers.length > end
-      console.log(filteredTickers.length, end)
 
       return filteredTickers.slice(start, end)
     },
 
     subscribeToUpdates(tickerName) {
-      setInterval(async () => {
+      //============ОТКЛЮЧЕНО ИЗ-ЗА ЛИМИТА. ОБНОВЛЕНИЕ ПОКА ВРУЧНУЮ
+      // setInterval(async () => {
+      //   const res = await fetch('https://min-api.cryptocompare.com/data/price?fsym=' + tickerName + '&tsyms=USD&api_key=70aba50377d8f5eda9cfc235b50c0cdf5e77bb848b97fa7d3892dc4d49bf836f');
+      //   const data = await res.json();
+      //   // currentTicker.price = data.USD;
+      //   this.tickers.find(t => t.name === tickerName).price = data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
+      //
+      //   if (this.sel?.name === tickerName) {
+      //     this.graph.push(data.USD);
+      //   }
+      // }, 3000);
+      const getRate = async () => {
         const res = await fetch('https://min-api.cryptocompare.com/data/price?fsym=' + tickerName + '&tsyms=USD&api_key=70aba50377d8f5eda9cfc235b50c0cdf5e77bb848b97fa7d3892dc4d49bf836f');
         const data = await res.json();
+        console.log('update price')
         // currentTicker.price = data.USD;
         this.tickers.find(t => t.name === tickerName).price = data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
 
         if (this.sel?.name === tickerName) {
           this.graph.push(data.USD);
         }
-      }, 3000);
+      }
+      getRate()
     },
 
     getCoinList() {

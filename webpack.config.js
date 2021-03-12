@@ -105,6 +105,7 @@ module.exports = (env = {}) => ({
     publicPath: process.env.BASE_URL,
     index: './index.html',
     hot: true,
+    host: '192.168.1.114',
     stats: 'minimal',
     quiet: true,
     overlay: {
